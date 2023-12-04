@@ -1,0 +1,24 @@
+title: "&a"
+rows: 3
+
+#DEVELOPER ONLY. Manage only values if you are user!
+system:
+  slot: value
+
+items:
+  item:
+    material: "TYPE:AMOUNT:DATA"
+    name: "Name"
+    lore:
+      - ''
+      - 'Simple Lore'
+      - ''
+    slot: 12
+    click_commands:
+      -
+    right_click_commands:
+      -
+    left_click_commands:
+      -
+    middle_click_commands:
+      -
