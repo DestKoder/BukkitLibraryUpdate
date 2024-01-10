@@ -23,10 +23,11 @@ public class TaskManager {
 
     private final Map<String, BukkitTask> tasks;
 
-    private TaskManager(){
+    public TaskManager(){
         this.tasks = new HashMap<>();
     }
 
+    @Deprecated
     public static TaskManager get() {
         if(i == null) i = new TaskManager();
         return i;

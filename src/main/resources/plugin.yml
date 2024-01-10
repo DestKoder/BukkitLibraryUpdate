@@ -3,5 +3,5 @@ version: '${project.version}'
 main: ru.dest.library.Library
 softdepend: [PlaceholderAPI, Vault, PlayerPoints]
 authors: [DestKoder]
-api-version: 1.19
+api-version: 1.16
 load: STARTUP

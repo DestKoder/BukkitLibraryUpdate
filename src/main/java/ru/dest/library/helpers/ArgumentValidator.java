@@ -1,5 +1,6 @@
 package ru.dest.library.helpers;
 
+import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 import ru.dest.library.Library;
 import ru.dest.library.command.ExecutionData;
@@ -38,11 +39,20 @@ public class ArgumentValidator {
         for(int i = 0; i < data.length; i++){
             String tmp = data[i];
             tmp = tmp.substring(1, tmp.length()-1);
-            if(!patterns.containsKey(tmp))throw new IllegalStateException("Invalid argument type.");
+            if(!patterns.containsKey(tmp) && !tmp.equalsIgnoreCase("player"))throw new IllegalStateException("Invalid argument type.");
+            if(tmp.equalsIgnoreCase("player")){
+                if(Bukkit.getPlayer(execution.arguments()[i]) == null) {
+                    Library.getInstance().getLang().getMessage("error.argument." + tmp).format("i", i + "").send(execution.executor());
+                    return false;
+                }
+                return true;
+            }
+
             if(!execution.arguments()[i].matches(patterns.get(tmp))) {
                 Library.getInstance().getLang().getMessage("error.argument."+tmp).format("i", i+"").send(execution.executor());
                 return false;
             }
+
         }
         return true;
     }

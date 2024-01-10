@@ -15,10 +15,7 @@ import ru.dest.library.object.Pair;
 import ru.dest.library.utils.ColorUtils;
 import ru.dest.library.utils.Utils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Consumer;
 
 /**
@@ -99,6 +96,19 @@ public class GUI implements InventoryHolder {
             handlers.get(e.getSlot()).accept(e);
         }
         handle(e);
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+        GUI gui = (GUI) object;
+        return Objects.equals(opener, gui.opener) && Objects.equals(config, gui.config);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(opener, config);
     }
 
     public final void h(InventoryCloseEvent e){if(closeHandler != null) closeHandler.accept(e);}

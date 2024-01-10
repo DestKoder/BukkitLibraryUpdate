@@ -31,7 +31,7 @@ public class CommandManager<T extends JavaPlugin> extends BukkitCommand<T>  {
 
     private void regInClassCommands(){
         for(Method m : getClass().getMethods()){
-            if(m.getName().equalsIgnoreCase("__default")) continue;
+            if(m.getName().equalsIgnoreCase("__default") || m.getName().equalsIgnoreCase("perform")) continue;
             if(!Arrays.equals(m.getParameterTypes(), parameters)) continue;
 
             this.registeredCommands.add(new InClassCommand<>(plugin, m.getName(), m, this));

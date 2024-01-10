@@ -5,6 +5,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.jetbrains.annotations.NotNull;
 import ru.dest.library.helpers.AnnotationValidator;
 
 import java.util.ArrayList;
@@ -25,7 +26,7 @@ public abstract class BukkitCommand<T extends JavaPlugin> extends Command implem
     }
 
     @Override
-    public boolean execute(CommandSender sender, String alias, String[] args) {
+    public boolean execute(@NotNull CommandSender sender, @NotNull String alias, String[] args) {
         ExecutionData data = new ExecutionData(sender, this, alias, args);
 
         try{
@@ -36,7 +37,8 @@ public abstract class BukkitCommand<T extends JavaPlugin> extends Command implem
             this.perform(data);
         }catch (Exception e){
             Bukkit.getLogger().warning(ChatColor.RED + "Error executing command " + getName() + ": " + e.getMessage());
-            Bukkit.getLogger().warning(ChatColor.RED + "Cause: "+ e.getCause().toString());
+            e.printStackTrace();
+            //            Bukkit.getLogger().warning(ChatColor.RED + "Cause: "+ e.getCause().toString());
         }
         return true;
     }

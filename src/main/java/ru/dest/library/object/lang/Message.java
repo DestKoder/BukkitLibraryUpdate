@@ -11,7 +11,7 @@ import java.util.List;
 public interface Message {
 
     @NotNull
-    Message format(@NotNull String key,@NotNull String value);
+    Message format(@NotNull String key, @NotNull String value);
 
     @NotNull
     default Message format(@NotNull Pair<String,String> replace){
@@ -29,9 +29,10 @@ public interface Message {
 
     void send(@NotNull CommandSender sender);
 
-    Object getRaw();
+    String getRaw();
 
-    void addClickHandler(ClickEvent event);
-
-    void addHoverEvent(HoverEvent event);
+    //
+//    void addClickHandler(ClickEvent event);
+//
+//    void addHoverEvent(HoverEvent event);
 }

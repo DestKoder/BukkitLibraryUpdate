@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.BiConsumer;
 
 public class GUIConfig {
@@ -82,6 +83,19 @@ public class GUIConfig {
         this.system = system;
         this.items = items;
         this.handlers = handlers;
+    }
+
+    @Override
+    public boolean equals(Object object) {
+        if (this == object) return true;
+        if (object == null || getClass() != object.getClass()) return false;
+        GUIConfig guiConfig = (GUIConfig) object;
+        return size == guiConfig.size && Objects.equals(title, guiConfig.title) && Objects.equals(system, guiConfig.system) && Objects.equals(items, guiConfig.items);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(size, title, system, items);
     }
 
     @Contract("_,_ -> new")

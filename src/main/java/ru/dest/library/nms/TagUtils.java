@@ -11,7 +11,7 @@ public interface TagUtils {
     }
     @Deprecated
     default ItemStack setIntegerTag(ItemStack item, String key, int value){
-        return setIntegerTag(item, NamespacedKey.minecraft(key), value);
+        return setIntegerTag(item, NamespacedKey.minecraft(key.toLowerCase()), value);
     }
     @Deprecated
     default ItemStack setDoubleTag(ItemStack item, String key, double value){

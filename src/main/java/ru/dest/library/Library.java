@@ -20,6 +20,7 @@ import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import ru.dest.library.bukkit.BukkitPlugin;
 import ru.dest.library.gui.GUI;
@@ -35,6 +36,9 @@ import ru.dest.library.session.SessionManager;
 import ru.dest.library.task.TaskManager;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public final class Library extends BukkitPlugin<Library> implements Listener {
 
@@ -47,6 +51,8 @@ public final class Library extends BukkitPlugin<Library> implements Listener {
     private NamespacedKey itemId;
 
     private Lang lang;
+
+    private final List<GUI> toShow = new ArrayList<>();
 
     @Override
     public void load() {
@@ -95,12 +101,22 @@ public final class Library extends BukkitPlugin<Library> implements Listener {
 
         itemId = new NamespacedKey(this, "itemId");
 
+        getTaskManager().callRepeating(this, 10, 0, false, new BukkitRunnable() {
+            @Override
+            public void run() {
+                if(toShow.isEmpty()) return;
+                for(GUI gui : toShow){
+                    gui.show();;
+                    toShow.remove(gui);
+                }
+            }
+        });
+
         instance = this;
     }
 
     @Override
-    public void onDisable() {
-        HandlerList.unregisterAll((Plugin) this);
+    public void disable() {
         tM.cancelAll();
     }
 
@@ -209,7 +225,7 @@ public final class Library extends BukkitPlugin<Library> implements Listener {
 
         LivingEntity damager = (LivingEntity) event.getDamager();
 
-        ItemStack hand = damager.getEquipment().getItemInMainHand();
+        ItemStack hand = Objects.requireNonNull(damager.getEquipment()).getItemInMainHand();
 
         CustomItem cItem = ItemRegistry.get().getItem(hand);
         if(cItem == null) return;
@@ -226,5 +242,9 @@ public final class Library extends BukkitPlugin<Library> implements Listener {
 
     public Lang getLang() {
         return lang;
+    }
+
+    public void g(GUI g){
+        this.toShow.add(g);
     }
 }

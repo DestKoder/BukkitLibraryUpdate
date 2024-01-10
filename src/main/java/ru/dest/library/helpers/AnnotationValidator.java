@@ -3,6 +3,7 @@ package ru.dest.library.helpers;
 import org.bukkit.entity.Player;
 import ru.dest.library.Library;
 import ru.dest.library.command.ExecutionData;
+import ru.dest.library.command.ICommand;
 import ru.dest.library.command.SimpleCommand;
 import ru.dest.library.command.annotation.ConsoleOnly;
 import ru.dest.library.command.annotation.Permission;
@@ -46,7 +47,7 @@ public class AnnotationValidator {
         registry.put(cl, c);
     }
 
-    public static boolean validate(SimpleCommand<?> cmd, ExecutionData data){
+    public static boolean validate(ICommand cmd, ExecutionData data){
         for(Class<? extends Annotation> cl : registry.keySet() ){
             Annotation ann = cmd.getClass().getDeclaredAnnotation(cl);
             if(ann == null) continue;
