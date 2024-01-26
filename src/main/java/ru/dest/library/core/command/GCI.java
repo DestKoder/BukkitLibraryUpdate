@@ -17,7 +17,7 @@ import ru.dest.library.utils.Patterns;
 @RequireArgs(args = "{player} {string}")
 public class GCI extends BukkitCommand<Library> {
 
-    public GCI(Library plugin, String name) {
+    public GCI(Library plugin) {
         super(plugin, "givecustomitem", "Give Custom item", "/gci <player> <item> [amount]", "gci", "giveci", "gcustomitem");
     }
 

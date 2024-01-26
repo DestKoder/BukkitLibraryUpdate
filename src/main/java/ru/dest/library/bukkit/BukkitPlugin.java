@@ -1,5 +1,6 @@
 package ru.dest.library.bukkit;
 
+import lombok.Getter;
 import org.bukkit.event.HandlerList;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
@@ -9,6 +10,7 @@ import ru.dest.library.locale.Lang;
 import ru.dest.library.logging.ConsoleLogger;
 import ru.dest.library.logging.ILogger;
 import ru.dest.library.logging.LoggerWrap;
+import ru.dest.library.object.PluginVersion;
 import ru.dest.library.task.TaskManager;
 
 import java.io.File;
@@ -23,9 +25,15 @@ public abstract class BukkitPlugin<T extends JavaPlugin> extends JavaPlugin{
 
     private boolean disable = false;
 
+    @Getter
+    private PluginVersion version;
+
     @Override
     public final void onLoad(){
         this.logger = useWrappedLogger() ? new LoggerWrap(getLogger()) : new ConsoleLogger(getDescription().getName(), false);
+
+        this.version = PluginVersion.fromString(getDescription().getVersion());
+
         try {
             load();
         } catch (Exception e) {

@@ -23,6 +23,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import ru.dest.library.bukkit.BukkitPlugin;
 import ru.dest.library.bukkit.BukkitServices;
+import ru.dest.library.core.command.GCI;
 import ru.dest.library.gui.GUI;
 import ru.dest.library.items.CustomItem;
 import ru.dest.library.items.ItemRegistry;
@@ -123,6 +124,10 @@ public final class Library extends BukkitPlugin<Library> implements Listener {
         registry.register(
                 new EventListener(this),
                 new ItemListener(this)
+        );
+
+        registry.register(
+                new GCI(this)
         );
 
         this.initializeServices();
