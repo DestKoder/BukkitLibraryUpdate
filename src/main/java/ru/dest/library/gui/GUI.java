@@ -9,14 +9,20 @@ import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import ru.dest.library.object.Pair;
 import ru.dest.library.utils.ColorUtils;
+import ru.dest.library.utils.StringUtils;
 import ru.dest.library.utils.Utils;
 
 import java.util.*;
 import java.util.function.Consumer;
+
+import static ru.dest.library.utils.ColorUtils.parse;
 
 /**
  * Represents a Simple GUI which can be showed for player
@@ -32,6 +38,7 @@ public class GUI implements InventoryHolder {
     private final GUIConfig config;
 
     private final Map<Integer, Consumer<InventoryClickEvent>> handlers;
+    private List<Pair<String,String>> format;
     private Consumer<InventoryCloseEvent> closeHandler;
 
     /**
@@ -52,6 +59,7 @@ public class GUI implements InventoryHolder {
     public GUI(@NotNull GUIConfig config,@NotNull Player opener,@Nullable List<Pair<String,String>> titleFormat){
         this.config = config;
         this.opener = opener;
+        this.format = titleFormat == null ? new ArrayList<>() : titleFormat;
         this.handlers = new HashMap<>();
         this.inventory = Bukkit.createInventory(this, config.getSize(), Utils.applyPlaceholders(titleFormat == null ? config.getTitle() : config.getTitle(titleFormat), opener));
         this.fill();
@@ -68,6 +76,7 @@ public class GUI implements InventoryHolder {
         this.opener = opener;
         this.handlers = new HashMap<>();
         this.inventory = Bukkit.createInventory(this, size, Utils.applyPlaceholders(ColorUtils.parse(title), opener));
+        this.format = new ArrayList<>();
     }
 
     /**
@@ -80,11 +89,31 @@ public class GUI implements InventoryHolder {
         this.config = null;
         this.opener = opener;
         this.handlers = new HashMap<>();
-        this.inventory = Bukkit.createInventory(this, type);
+        this.inventory = Bukkit.createInventory(this, type, ColorUtils.parse(Utils.applyPlaceholders(title, opener)));
+        this.format = new ArrayList<>();
+    }
+
+    protected void setItem(int slot, @NotNull ItemStack itemStack){
+        ItemStack item = itemStack.clone();
+
+        ItemMeta meta = item.getItemMeta();
+
+        assert meta != null;
+
+        if(meta.hasDisplayName()) meta.setDisplayName(parse(Utils.applyPlaceholders(StringUtils.format(meta.getDisplayName(), format), opener)));
+
+        if(meta.hasLore()){
+            List<String> newLore = new ArrayList<>();
+            meta.getLore().forEach(s -> newLore.add(parse(Utils.applyPlaceholders(StringUtils.format(s, format), opener))));
+            meta.setLore(newLore);
+        }
+
+        item.setItemMeta(meta);
+        inventory.setItem(slot, item);
     }
 
     private void fill(){
-        if(config != null) config.applyItems((l, i) -> l.forEach(slot -> inventory.setItem(slot, i.finishItem(opener))));
+        if(config != null) config.applyItems((l, i) -> l.forEach(slot -> setItem(slot, i.getItem())));
     }
 
     public final void h(@NotNull InventoryClickEvent e){

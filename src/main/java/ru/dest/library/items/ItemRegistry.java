@@ -58,4 +58,8 @@ public class ItemRegistry {
         String itemId = Library.getInstance().getNbtUtils().getStringTagValue(item, Library.getInstance().getItemId());
         return itemId != null && !itemId.isEmpty();
     }
+
+    public boolean hasRegisteredItem(RegistryKey id){
+        return itemMap.containsKey(id);
+    }
 }

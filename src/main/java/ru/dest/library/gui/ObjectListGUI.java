@@ -9,7 +9,9 @@ import org.jetbrains.annotations.NotNull;
 import ru.dest.library.object.BukkitItem;
 import ru.dest.library.object.Pair;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BiConsumer;
 
 /**
@@ -24,6 +26,8 @@ public class ObjectListGUI<ItemObject extends BukkitItem> extends GUI{
     protected BiConsumer<InventoryClickEvent, ItemObject> onItemClick;
 
     protected int page, pages;
+
+    private final Map<Integer, ItemObject> pageItems = new HashMap<>();
 
     public ObjectListGUI(GUIConfig template, Player opener, List<Pair<String,String>> titleFormat, @NotNull List<ItemObject> items) {
         super(template, opener, titleFormat);
@@ -55,11 +59,13 @@ public class ObjectListGUI<ItemObject extends BukkitItem> extends GUI{
 
     private void refillContent(){
         this.clearContent();
+        pageItems.clear();
         for(int i = 0; i < emptySlots.size(); i++){
             int item = i + (page == 0 ? 0 : page*emptySlots.size());
 
             if(item < items.size()){
-                inventory.setItem(emptySlots.get(i), items.get(item).getItem());
+                setItem(emptySlots.get(i), items.get(item).getItem());
+                pageItems.put(emptySlots.get(i), items.get(item));
             }
         }
     }
@@ -70,24 +76,24 @@ public class ObjectListGUI<ItemObject extends BukkitItem> extends GUI{
         }
     }
 
-
     @Override
     public final void handle(@NotNull InventoryClickEvent event) {
         if(onItemClick == null) return;
         int slot = event.getSlot();
-
-        if(inventory.getItem(slot) == null || inventory.getItem(slot).getType() == Material.AIR) return;
-        if(this.onItemClick == null) return;
         if(!emptySlots.contains(slot)) return;
+        if(inventory.getItem(slot) == null || inventory.getItem(slot).getType() == Material.AIR) return;
 
-        int itemPos = page == 0 ? slot-emptySlots.get(0) :  this.page * this.emptySlots.size() + slot;
+        if(!pageItems.containsKey(slot)) return;
 
-        if(items.size() < itemPos) {
-            System.out.println("Internal error item size " + items.size() +" < itemPos " + itemPos +". Page: " + page + "; Slot: " + (slot-emptySlots.get(0)));
-            return;
-        }
 
-        this.onItemClick.accept(event, items.get(itemPos));
+        //int itemPos = page == 0 ? slot-emptySlots.get(0) :  this.page * this.emptySlots.size() + slot;
+
+        //if(items.size() < itemPos) {
+        //    System.out.println("Internal error item size " + items.size() +" < itemPos " + itemPos +". Page: " + page + "; Slot: " + (slot-emptySlots.get(0)));
+        //    return;
+        //}
+
+        this.onItemClick.accept(event, pageItems.get(slot));
     }
 
     @Override

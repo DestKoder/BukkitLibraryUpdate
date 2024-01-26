@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import ru.dest.library.helpers.AnnotationValidator;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public abstract class BukkitCommand<T extends JavaPlugin> extends Command implements SimpleCommand<T>{
@@ -18,6 +19,14 @@ public abstract class BukkitCommand<T extends JavaPlugin> extends Command implem
     public BukkitCommand(String name, String description, String usageMessage, List<String> aliases, T plugin) {
         super(name, description, usageMessage, aliases);
         this.plugin = plugin;
+    }
+
+    public BukkitCommand(T plugin, String name, String desc, String usage, String... aliases){
+        this(name, desc, usage, Arrays.asList(aliases), plugin);
+    }
+
+    public BukkitCommand(T plugin, String name){
+        this(name, plugin);
     }
 
     public BukkitCommand(String name, T plugin){

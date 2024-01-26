@@ -1,12 +1,12 @@
 package ru.dest.library;
 
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -19,40 +19,47 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerItemConsumeEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import ru.dest.library.bukkit.BukkitPlugin;
+import ru.dest.library.bukkit.BukkitServices;
 import ru.dest.library.gui.GUI;
 import ru.dest.library.items.CustomItem;
 import ru.dest.library.items.ItemRegistry;
 import ru.dest.library.items.i.*;
+import ru.dest.library.core.listener.EventListener;
+import ru.dest.library.core.listener.ItemListener;
 import ru.dest.library.locale.Lang;
 import ru.dest.library.nms.NMS;
 import ru.dest.library.nms.TagUtils;
 import ru.dest.library.scoreboard.ScoreboardService;
 import ru.dest.library.scoreboard.TabScoreboard;
+import ru.dest.library.service.economy.PlayerPointsEconomy;
+import ru.dest.library.service.economy.VaultEconomy;
 import ru.dest.library.session.SessionManager;
 import ru.dest.library.task.TaskManager;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 public final class Library extends BukkitPlugin<Library> implements Listener {
 
+    @Getter
     private static Library instance;
 
     private TaskManager tM;
+    @Getter
     private TagUtils nbtUtils;
+    @Getter
     private ScoreboardService<?> scoreboardService;
 
+    @Getter
     private NamespacedKey itemId;
 
+    @Getter
     private Lang lang;
 
-    private final List<GUI> toShow = new ArrayList<>();
+    private final Map<Long, GUI> toShow = new HashMap<>();
 
     @Override
     public void load() {
@@ -67,11 +74,11 @@ public final class Library extends BukkitPlugin<Library> implements Listener {
         tM = TaskManager.get();
 
         try {
-            boolean hasMethod =false;
+            boolean hasMethod = false;
             try {
                 ItemMeta.class.getMethod("getPersistentDataContainer");
                 hasMethod = true;
-            }catch (NoSuchMethodException e) {}
+            }catch (NoSuchMethodException ignored) {}
 
             NMS nms;
 
@@ -105,14 +112,20 @@ public final class Library extends BukkitPlugin<Library> implements Listener {
             @Override
             public void run() {
                 if(toShow.isEmpty()) return;
-                for(GUI gui : toShow){
-                    gui.show();;
-                    toShow.remove(gui);
+                for(long l : toShow.keySet()){
+                    toShow.get(l).show();;
+                    toShow.remove(l);
                 }
             }
         });
-
         instance = this;
+
+        registry.register(
+                new EventListener(this),
+                new ItemListener(this)
+        );
+
+        this.initializeServices();
     }
 
     @Override
@@ -120,16 +133,19 @@ public final class Library extends BukkitPlugin<Library> implements Listener {
         tM.cancelAll();
     }
 
-    public TagUtils getNbtUtils() {
-        return nbtUtils;
-    }
+    private void initializeServices(){
+        VaultEconomy vaultEconomy = VaultEconomy.init(getServer());
 
-    public static Library getInstance() {
-        return instance;
-    }
+        if(vaultEconomy != null){
+            logger.info("Initialized Vault Economy service");
+            BukkitServices.register(VaultEconomy.class, vaultEconomy);
+        }
+        PlayerPointsEconomy playerPointsEconomy = PlayerPointsEconomy.init(getServer());
 
-    public ScoreboardService<?> getScoreboardService() {
-        return scoreboardService;
+        if(playerPointsEconomy != null){
+            logger.info("Initialized PlayerPoints Economy service");
+            BukkitServices.register(PlayerPointsEconomy.class, playerPointsEconomy);
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
@@ -142,7 +158,7 @@ public final class Library extends BukkitPlugin<Library> implements Listener {
 
     @EventHandler
     public void h(@NotNull final InventoryClickEvent e){
-        if(e.getInventory() == null || e.getInventory().getHolder() == null)return;
+        if( e.getInventory().getHolder() == null)return;
         if(!(e.getInventory().getHolder() instanceof GUI))return;
 
         ((GUI)e.getInventory().getHolder()).h(e);
@@ -150,21 +166,21 @@ public final class Library extends BukkitPlugin<Library> implements Listener {
 
     @EventHandler
     public void h(@NotNull final InventoryCloseEvent e){
-        if(e.getInventory() == null || e.getInventory().getHolder() == null)return;
+        if(e.getInventory().getHolder() == null)return;
         if(!(e.getInventory().getHolder() instanceof GUI))return;
         ((GUI)e.getInventory().getHolder()).h(e);
     }
 
     @EventHandler
     public void h(@NotNull final InventoryDragEvent e){
-        if(e.getInventory() == null || e.getInventory().getHolder() == null)return;
+        if( e.getInventory().getHolder() == null)return;
         if(!(e.getInventory().getHolder() instanceof GUI))return;
         ((GUI)e.getInventory().getHolder()).handle(e);
     }
 
     @EventHandler
     public void h(@NotNull BlockBreakEvent event){
-        ItemStack item = event.getPlayer().getEquipment().getItemInMainHand();
+        ItemStack item = Objects.requireNonNull(event.getPlayer().getEquipment()).getItemInMainHand();
 
         if(item.getType().name().contains("AIR")) return;
 
@@ -236,15 +252,7 @@ public final class Library extends BukkitPlugin<Library> implements Listener {
         }
     }
 
-    public NamespacedKey getItemId() {
-        return itemId;
-    }
-
-    public Lang getLang() {
-        return lang;
-    }
-
     public void g(GUI g){
-        this.toShow.add(g);
+        this.toShow.put(System.currentTimeMillis(), g);
     }
 }

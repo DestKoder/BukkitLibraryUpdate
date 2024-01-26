@@ -1,9 +1,8 @@
 package ru.dest.library.object.lang;
 
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.HoverEvent;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
+import ru.dest.library.impl.locale.AdvancedMessage;
 import ru.dest.library.object.Pair;
 
 import java.util.List;
@@ -26,6 +25,13 @@ public interface Message {
         }
         return m;
     }
+
+    default IAdvancedMessage modify(){
+        return new AdvancedMessage(this);
+    }
+
+    void broadcast();
+    void broadcast(String permission);
 
     void send(@NotNull CommandSender sender);
 

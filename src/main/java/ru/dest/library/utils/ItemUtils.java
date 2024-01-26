@@ -3,7 +3,6 @@ package ru.dest.library.utils;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemStack;
@@ -16,6 +15,8 @@ import ru.dest.library.Library;
 import ru.dest.library.exception.InvalidMaterialException;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -142,10 +143,10 @@ public class ItemUtils {
 
         if(name != null) meta.setDisplayName(ColorUtils.parse(name));
         if(lore != null && !lore.isEmpty()) meta.setLore(ColorUtils.parse(lore));
-        Library lb = Library.getInstance();
-        if(lb.getNbtUtils() != null) item =  lb.getNbtUtils().setIntegerTag(item, "customModelData" ,id);
 
         item.setItemMeta(meta);
+
+        setCustomModelData(item, id);
 
         return item;
     }
@@ -166,23 +167,34 @@ public class ItemUtils {
 
         if(name != null) meta.setDisplayName(ColorUtils.parse(name));
         if(lore != null && !lore.isEmpty()) meta.setLore(ColorUtils.parse(lore));
-        Library lb = Library.getInstance();
-        if(lb.getNbtUtils() != null) item =  lb.getNbtUtils().setIntegerTag(item, "customModelData" ,id);
 
         item.setItemMeta(meta);
+
+        setCustomModelData(item, id);
 
         return item;
     }
 
+    public static void setCustomModelData(@NotNull ItemStack item, int data){
+        ItemMeta meta = item.getItemMeta();
+
+        assert meta != null;
+        try {
+            Method m = meta.getClass().getDeclaredMethod("setCustomModelData", Integer.class);
+            m.setAccessible(true);
+            m.invoke(meta, data);
+
+            item.setItemMeta(meta);
+        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException ignored){}
+    }
+
     /**
      * Apply enchantments to item
-     * @param item - item to apply
+     *
+     * @param item         - item to apply
      * @param enchantments Section or map of enchantments and it's levels
-     * @return given item with applied enchantments
      */
-    @Contract("_, _ -> param1")
-    @NotNull
-    public static ItemStack applyEnchantments(@NotNull ItemStack item, @NotNull ConfigurationSection enchantments){
+    public static void applyEnchantments(@NotNull ItemStack item, @NotNull ConfigurationSection enchantments){
         for(String s : enchantments.getKeys(false)){
             Enchantment ench = Enchantment.getByName(s);
             if(ench == null) continue;
@@ -190,7 +202,6 @@ public class ItemUtils {
             item.addUnsafeEnchantment(ench, enchantments.getInt(s));
         }
 
-        return item;
     }
 
     /**

@@ -1,6 +1,7 @@
 package ru.dest.library.impl.locale;
 
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.jetbrains.annotations.NotNull;
 import ru.dest.library.object.lang.Message;
@@ -23,8 +24,18 @@ public final class MessageImpl implements Message {
     }
 
     @Override
+    public void broadcast() {
+        Bukkit.broadcastMessage(message);
+    }
+
+    @Override
+    public void broadcast(String permission) {
+        Bukkit.broadcast(message, permission);
+    }
+
+    @Override
     public void send(@NotNull CommandSender sender) {
-        ChatUtils.send(message, sender);
+        ChatUtils.send(sender, message);
     }
 
     @Override

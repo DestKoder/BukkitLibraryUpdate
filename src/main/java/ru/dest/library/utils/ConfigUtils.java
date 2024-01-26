@@ -14,7 +14,7 @@ import ru.dest.library.nms.TagUtils;
 
 public class ConfigUtils {
 
-    private static TagUtils nbt = Library.getInstance().getNbtUtils();
+    private static TagUtils nbt;
 
     /**
      * Save location to {@link ConfigurationSection}
@@ -69,6 +69,7 @@ public class ConfigUtils {
 
     @Contract("_ -> new")
     public static @NotNull ItemStack getItem(@NotNull ConfigurationSection section){
+        if(nbt == null) nbt = Library.getInstance().getNbtUtils();
         if(!hasString("material", section)) throw new ItemLoadException("ID not specified");
         ItemStack item;
         try{
@@ -85,14 +86,13 @@ public class ConfigUtils {
 
         item.setItemMeta(meta);
 
-        if(hasInt("model", section) && nbt != null ) item = nbt.setIntegerTag(item, "customModelData", section.getInt("model"));
-
         if(hasSection("nbt", section) && nbt != null ){
             ConfigurationSection nbtSection = section.getConfigurationSection("nbt");
             for(String key : nbtSection.getKeys(false)){
                 if(!key.contains(":")){
                     if(nbtSection.isInt(key)) item = nbt.setIntegerTag(item, key, nbtSection.getInt(key));
-                    item = nbt.setStringTag(item, key, nbtSection.getString(key));
+                    else item = nbt.setStringTag(item, key, nbtSection.getString(key));
+                    continue;
                 }
                 String[] data = key.split(":");
                 NamespacedKey k = new NamespacedKey(data[0], data[1]);
@@ -106,6 +106,8 @@ public class ConfigUtils {
         if(hasSection("enchantments", section)){
             ItemUtils.applyEnchantments(item, section.getConfigurationSection("enchantments"));
         }
+
+        if(hasInt("model", section) && nbt != null ) ItemUtils.setCustomModelData(item, section.getInt("model"));
 
         return item;
     }

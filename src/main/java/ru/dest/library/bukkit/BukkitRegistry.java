@@ -5,12 +5,14 @@ import org.bukkit.command.CommandMap;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import ru.dest.library.command.BukkitCommand;
+import ru.dest.library.service.IService;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public final class BukkitRegistry<T extends JavaPlugin> {
-
     private final T plugin;
 
     private CommandMap map;
@@ -23,6 +25,7 @@ public final class BukkitRegistry<T extends JavaPlugin> {
 
         map = (CommandMap) field.get(Bukkit.getServer());
     }
+
 
     /**
      * Method for registering runtime commands

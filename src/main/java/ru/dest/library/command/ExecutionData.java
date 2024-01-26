@@ -2,10 +2,12 @@ package ru.dest.library.command;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnmodifiableView;
+import ru.dest.library.utils.PlayerUtils;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -68,6 +70,18 @@ public final class ExecutionData {
      * @return Array of arguments
      */
     public String[] arguments(){return arguments;}
+
+    public Player getPlayer(int arg){
+        if(arg >= arguments.length) {
+            throw new IllegalArgumentException("Arg number couldn't be more than total args count");
+        }
+        return PlayerUtils.getActionedOnlinePlayer(arguments[arg], hasFlag("uuid"));
+    }
+
+    public String argument(int index){
+        if(index >= arguments.length) throw new IllegalArgumentException("no such argument");
+        return arguments[index];
+    }
 
     /**
      * Get a Bukkit version of executed command;

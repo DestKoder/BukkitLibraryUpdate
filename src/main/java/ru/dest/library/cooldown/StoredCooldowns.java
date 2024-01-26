@@ -4,6 +4,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
+import ru.dest.library.bukkit.BukkitPlugin;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -20,8 +21,16 @@ import java.util.UUID;
  */
 public class StoredCooldowns extends Cooldowns{
 
-    private File data;
+    private final File data;
 
+    public StoredCooldowns(BukkitPlugin<?> plugin, @NotNull File data) throws FileNotFoundException {
+        super(plugin);
+        this.data = data;
+
+        if(!data.exists()) throw new FileNotFoundException("Data file isn't exists!");
+    }
+
+    @Deprecated
     public StoredCooldowns(Plugin plugin, @NotNull File data) throws FileNotFoundException {
         super(plugin);
         this.data = data;

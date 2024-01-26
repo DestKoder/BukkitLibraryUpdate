@@ -1,5 +1,6 @@
 package ru.dest.library.object.gui;
 
+import lombok.Getter;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -18,6 +19,7 @@ import static ru.dest.library.utils.ColorUtils.parse;
 
 public class GUIItem {
 
+    @Getter
     private final ItemStack item;
     private final List<String> clickCommands;
     private final Map<ClickType, List<String>> commandsByClickType;

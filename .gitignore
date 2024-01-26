@@ -5,8 +5,6 @@
 *.ipr
 *.iws
 
-src/main/java/ru/dest/library/impl/
-
 # IntelliJ
 out/
 
@@ -113,3 +111,4 @@ buildNumber.properties
 
 # Common working directory
 run/
+/src/main/java/ru/dest/library/core/listener/

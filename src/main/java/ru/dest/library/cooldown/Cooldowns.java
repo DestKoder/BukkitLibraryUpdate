@@ -5,6 +5,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ru.dest.library.bukkit.BukkitPlugin;
 import ru.dest.library.task.TaskManager;
 import ru.dest.library.utils.TimeUtils;
 
@@ -18,13 +19,19 @@ import java.util.*;
  */
 public class Cooldowns {
 
-    private final Plugin plugin;
-
-    public Cooldowns(Plugin plugin) {
-        this.plugin = plugin;
+    public Cooldowns(BukkitPlugin<?> plugin) {
+        plugin.getTaskManager().callRepeating( "cd"+ TimeUtils.getCurrentUnixTime(),plugin,20, false, new BukkitRunnable() {
+            @Override
+            public void run() {
+                data.values().forEach(dataList -> {
+                    dataList.removeIf(data -> data.getExpires()-TimeUtils.getCurrentUnixTime() == 0);
+                });
+            }
+        });
     }
 
-    public void start(){
+    @Deprecated
+    public Cooldowns(Plugin plugin) {
         TaskManager.get().callRepeating( "cd"+ TimeUtils.getCurrentUnixTime(),plugin,20, false, new BukkitRunnable() {
             @Override
             public void run() {

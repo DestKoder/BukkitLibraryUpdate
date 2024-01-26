@@ -32,4 +32,8 @@ public class GUIContainer {
             }
         }
     }
+
+    public GUIConfig get(String key){
+        return data.get(key);
+    }
 }

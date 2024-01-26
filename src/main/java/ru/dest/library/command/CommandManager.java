@@ -5,6 +5,7 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import ru.dest.library.helpers.AnnotationValidator;
 import ru.dest.library.object.command.InClassCommand;
 
 import java.lang.reflect.Method;
@@ -17,14 +18,29 @@ public class CommandManager<T extends JavaPlugin> extends BukkitCommand<T>  {
 
     private static final Class<?>[] parameters = new Class[]{ExecutionData.class};
 
-    private final List<SimpleCommand<T>> registeredCommands = new ArrayList<>();
+    protected final List<SimpleCommand<T>> registeredCommands = new ArrayList<>();
 
     public CommandManager(T plugin, @NotNull String name,@NotNull String description,@NotNull String usageMessage,@NotNull List<String> aliases) {
         super(name, description, usageMessage, aliases, plugin);
         this.regInClassCommands();
     }
 
+    public CommandManager(String name, String description, String usageMessage, List<String> aliases, T plugin) {
+        super(name, description, usageMessage, aliases, plugin);
+        this.regInClassCommands();
+    }
+
+    public CommandManager(T plugin, String name, String desc, String usage, String... aliases) {
+        super(plugin, name, desc, usage, aliases);
+        this.regInClassCommands();
+    }
+
     public CommandManager(T plugin, @NotNull String name) {
+        super(name, plugin);
+        this.regInClassCommands();
+    }
+
+    public CommandManager(String name, T plugin) {
         super(name, plugin);
         this.regInClassCommands();
     }
@@ -49,27 +65,41 @@ public class CommandManager<T extends JavaPlugin> extends BukkitCommand<T>  {
 
         System.arraycopy(execution.arguments(), 1, arguments, 0, execution.arguments().length - 1);
 
-        ExecutionData data = new ExecutionData(execution.executor(), arguments, this, execution.arguments()[0], execution.flags());
-
         SimpleCommand<T> sub = getRegisteredCommand(execution.arguments()[0]);
 
+        ExecutionData data = new ExecutionData(execution.executor(), arguments, this, execution.arguments()[0], execution.flags());
+
+
         if(sub == null) {
-            execution.executor().sendMessage(usageMessage);
+            this.__default(execution);
+            return;
+        }
+
+        if(!AnnotationValidator.validate(sub, data)) {
             return;
         }
 
         sub.perform(data);
     }
 
+    protected List<String> getCommandsList(){
+        List<String> commands = new ArrayList<>();
+
+        for(SimpleCommand<T> cmd : registeredCommands){
+            commands.addAll(cmd.getAliases());
+            if(!commands.contains(cmd.getName())) commands.add(cmd.getName());
+        }
+
+        return commands;
+    }
+
     @NotNull
     @Override
-    public List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, @NotNull String @NotNull [] args) throws IllegalArgumentException {
+    public final List<String> tabComplete(@NotNull CommandSender sender, @NotNull String alias, @NotNull String @NotNull [] args) throws IllegalArgumentException {
         List<String> toReturn = new ArrayList<>();
         if(args.length == 1){
-            for(SimpleCommand<T> cmd : registeredCommands){
-                toReturn.addAll(cmd.getAliases());
-                if(!toReturn.contains(cmd.getName())) toReturn.add(cmd.getName());
-            }
+            toReturn.addAll(getCommandsList());
+
             return toReturn;
         }
         SimpleCommand<T> sub = getRegisteredCommand(args[0]);
