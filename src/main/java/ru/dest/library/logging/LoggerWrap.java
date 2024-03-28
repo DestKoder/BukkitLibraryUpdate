@@ -12,8 +12,6 @@ public class LoggerWrap implements ILogger {
         this.logger = logger;
     }
 
-    private boolean printErrorStacktrace;
-
     @Override
     public void info(String msg){
         logger.info(msg);
@@ -27,7 +25,7 @@ public class LoggerWrap implements ILogger {
     @Override
     public void error(@NotNull Exception e) {
         logger.warning(ConsoleLogger.RED + e.getMessage() + ConsoleLogger.RESET);
-        if(printErrorStacktrace) e.printStackTrace();
+        e.printStackTrace();
     }
 
     @Override
@@ -43,10 +41,5 @@ public class LoggerWrap implements ILogger {
     @Override
     public void error(Exception @NotNull ... ex){
         for(Exception e : ex) error(e);
-    }
-
-    @Override
-    public void setPrintErrorStacktrace(boolean printErrorStacktrace) {
-        this.printErrorStacktrace = printErrorStacktrace;
     }
 }

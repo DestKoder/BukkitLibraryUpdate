@@ -15,7 +15,6 @@ public class ConsoleLogger implements ILogger {
     public static final String WHITE = "\u001B[37m";
 
     private final String pluginName;
-    private boolean printErrorStacktrace;
 
     /**
      * @param pluginName name of Plugin
@@ -23,7 +22,13 @@ public class ConsoleLogger implements ILogger {
      */
     public ConsoleLogger(String pluginName, boolean printErrorStacktrace) {
         this.pluginName = pluginName;
-        this.printErrorStacktrace = printErrorStacktrace;
+    }
+
+    /**
+     * @param pluginName name of Plugin
+     */
+    public ConsoleLogger(String pluginName) {
+        this.pluginName = pluginName;
     }
 
     public void info(String msg){
@@ -36,7 +41,7 @@ public class ConsoleLogger implements ILogger {
 
     public void error(@NotNull Exception e) {
         Bukkit.getLogger().warning(CYAN + "["+pluginName+"] " + RED + e.getMessage() + RESET);
-        if(printErrorStacktrace) e.printStackTrace();
+        e.printStackTrace();
     }
 
     public void info(String @NotNull ... msg){
@@ -51,7 +56,4 @@ public class ConsoleLogger implements ILogger {
         for(Exception e : ex) error(e);
     }
 
-    public void setPrintErrorStacktrace(boolean printErrorStacktrace) {
-        this.printErrorStacktrace = printErrorStacktrace;
-    }
 }

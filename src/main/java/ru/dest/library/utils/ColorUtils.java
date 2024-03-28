@@ -18,7 +18,6 @@ public final class ColorUtils {
 
     private static final Pattern HEX_PATTERN = Pattern.compile("(&#[0-9a-fA-F]{6})");
 
-
     /**
      * Parse color symbols in string
      * @param s - string for parse

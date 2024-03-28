@@ -33,8 +33,15 @@ public class SessionManager {
 
     public boolean tryFinish(Player player, String message){
         if(sessions.containsKey(player)){
-            sessions.get(player).finish(player,message);
+            if(message.equalsIgnoreCase("cancel")){
+                removeSession(player);
+                return true;
+            }
+            ChatSession session = sessions.get(player);
             removeSession(player);
+
+            session.finish(player, message);
+
             return true;
         }
         return false;

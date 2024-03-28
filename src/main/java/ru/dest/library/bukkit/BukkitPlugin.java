@@ -21,7 +21,7 @@ public abstract class BukkitPlugin<T extends JavaPlugin> extends JavaPlugin{
     protected BukkitRegistry<T> registry;
     protected PluginManager pluginManager;
 
-    private final TaskManager taskManager = new TaskManager();
+    private TaskManager taskManager;
 
     private boolean disable = false;
 
@@ -46,6 +46,7 @@ public abstract class BukkitPlugin<T extends JavaPlugin> extends JavaPlugin{
     @Override
     @SuppressWarnings("unchecked")
     public final void onEnable() {
+        this.pluginManager = getServer().getPluginManager();
         if(disable){
             logger.warning("Error occupied during loading state. Disabling..");
             pluginManager.disablePlugin(this);
@@ -53,13 +54,12 @@ public abstract class BukkitPlugin<T extends JavaPlugin> extends JavaPlugin{
         }
         try{
             this.registry = new BukkitRegistry<>((T)this);
+            this.taskManager = new TaskManager(this);
         } catch (Exception e) {
             logger.warning(ConsoleLogger.RED + " Couldn't initialize CommandRegistry:");
             logger.error(e);
             pluginManager.disablePlugin(this);
         }
-
-        this.pluginManager = getServer().getPluginManager();
 
         try{
             enable();
@@ -108,7 +108,12 @@ public abstract class BukkitPlugin<T extends JavaPlugin> extends JavaPlugin{
         return Lang.load(lang, logger);
     }
 
-
+    public void saveIfNotExists(String resource){
+        File f = new File(getDataFolder(), resource);
+        if(!f.exists()){
+            saveResource(resource, true);
+        }
+    }
     public void disable() throws Exception{}
     public void load() throws Exception {}
     public abstract void enable() throws Exception;
@@ -125,7 +130,6 @@ public abstract class BukkitPlugin<T extends JavaPlugin> extends JavaPlugin{
         return registry;
     }
 
-    public final ILogger logger() {return logger;}
-
+    public ILogger logger() {return logger;}
 
 }

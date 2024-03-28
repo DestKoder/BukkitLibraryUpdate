@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import ru.dest.library.Library;
 import ru.dest.library.gui.GUI;
 import ru.dest.library.object.BukkitItem;
@@ -45,27 +46,46 @@ public class PlayerUtils {
         Library.getInstance().g(gui);
     }
 
-    public static boolean takeItem(@NotNull Player player, @NotNull ItemStack item, int amount){
-        item.setAmount(1);
+    public static boolean hasItem(@NotNull Player player, ItemStack item, int amount){
         PlayerInventory inventory = player.getInventory();
 
-        int slot = inventory.first(item);
+        for(int i = 0; i < inventory.getSize(); i++){
+            ItemStack it = inventory.getItem(i);
 
-        if(slot == -1) return false;
-        ItemStack i = inventory.getItem(slot);
+            if(it != null && it.getType() == item.getType()){
+                amount-= it.getAmount();
+            }
+        }
+        return amount <= 0;
+    }
 
-        assert i != null;
-        if(i.getAmount() - amount <= 0){
-            return false;
+    public static boolean takeItem(@NotNull Player player, @NotNull ItemStack item, int amount){
+        PlayerInventory inventory = player.getInventory();
+
+        while (amount > 0){
+            boolean found = false;
+            for(int i = 0; i < inventory.getSize(); i++){
+                ItemStack itm = inventory.getItem(i);
+                if(itm != null && itm.getType().equals(item.getType())){
+                    found = true;
+                    int amt = itm.getAmount() - 1;
+                    amount-=1;
+                    itm.setAmount(amt);
+                    inventory.setItem(i, amt > 0 ? itm : ItemUtils.EMPTY);
+                    player.updateInventory();
+                    break;
+                }
+            }
+            if(!found){
+                return false;
+            }
         }
 
-        if(i.getAmount() - amount == 0){
-            inventory.setItem(slot, ItemUtils.EMPTY);
-        }else {
-            i.setAmount(i.getAmount()-amount);
-            inventory.setItem(slot,i);
-        }
         return true;
+    }
+
+    public static void sendTitle(@NotNull Player player, String title, @Nullable String subtitle){
+        player.sendTitle(ColorUtils.parse(Utils.applyPlaceholders(title, player)), subtitle == null ? "" : ColorUtils.parse(Utils.applyPlaceholders(subtitle, player)), 20,20,20);
     }
 
     public static boolean takeItem(@NotNull Player player, @NotNull BukkitItem item, int amount){

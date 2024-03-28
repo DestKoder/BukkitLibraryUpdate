@@ -61,11 +61,12 @@ public class ItemListener extends BukkitListener<Library> {
 
         EntityEquipment equipment = e.getEquipment();
         if(equipment != null && equipment.getArmorContents() != null) for(ItemStack item : equipment.getArmorContents()){
+            if(item == null || item.getType() == Material.AIR) continue;
             CustomItem i = ItemRegistry.get().getItem(item);
             if(i != null) i.onProtect(event);
         }
 
-        if(damager.getEquipment() != null && damager.getEquipment().getItemInMainHand().getType() != Material.AIR){
+        if(damager.getEquipment() != null && damager.getEquipment().getItemInMainHand() != null && damager.getEquipment().getItemInMainHand().getType() != Material.AIR){
             CustomItem i = ItemRegistry.get().getItem(damager.getEquipment().getItemInMainHand());
             if( i != null) i.onDamage(event);
         }

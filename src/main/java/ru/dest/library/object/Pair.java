@@ -21,6 +21,14 @@ public final class Pair<KEY, VALUE> {
     }
 
     @Override
+    public String toString() {
+        return "Pair{" +
+                "key=" + key +
+                ", value=" + value +
+                '}';
+    }
+
+    @Override
     public int hashCode() {
         return Objects.hash(key, value);
     }

@@ -1,5 +1,6 @@
 package ru.dest.library.service.region;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import ru.dest.library.object.BlockPosition;
@@ -8,15 +9,15 @@ import java.util.List;
 
 public interface IRegion {
 
-    String getId();
+    default String getId(){throw new NotImplementedException();};;
 
-    BlockPosition getMinimumPoint();
-    BlockPosition getMaximumPoint();
+    default BlockPosition getMinimumPoint(){throw new NotImplementedException();};;
+    default BlockPosition getMaximumPoint(){throw new NotImplementedException();};;
 
-    int getPriority();
+    default int getPriority(){throw new NotImplementedException();};;
 
-    List<OfflinePlayer> getOwners();
-    List<OfflinePlayer> getMembers();
+    default List<OfflinePlayer> getOwners(){throw new NotImplementedException();};;
+    default List<OfflinePlayer> getMembers(){throw new NotImplementedException();};;
 
     default boolean isMember(OfflinePlayer player){
         return getMembers().contains(player);
@@ -29,5 +30,7 @@ public interface IRegion {
     default boolean isInRegion(Location loc){
         return isInRegion(new BlockPosition(loc));
     }
-    boolean isInRegion(BlockPosition position);
+    default boolean isInRegion(BlockPosition position){throw new NotImplementedException();};;
+
+    default void setFlag(String name, Object o){throw new NotImplementedException();};;
 }

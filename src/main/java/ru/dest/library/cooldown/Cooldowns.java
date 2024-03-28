@@ -19,7 +19,7 @@ import java.util.*;
  */
 public class Cooldowns {
 
-    public Cooldowns(BukkitPlugin<?> plugin) {
+    public Cooldowns(@NotNull BukkitPlugin<?> plugin) {
         plugin.getTaskManager().callRepeating( "cd"+ TimeUtils.getCurrentUnixTime(),plugin,20, false, new BukkitRunnable() {
             @Override
             public void run() {

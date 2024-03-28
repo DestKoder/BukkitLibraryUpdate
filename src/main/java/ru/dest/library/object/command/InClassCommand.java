@@ -1,5 +1,6 @@
 package ru.dest.library.object.command;
 
+import lombok.Getter;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -9,6 +10,7 @@ import ru.dest.library.command.SimpleCommand;
 import ru.dest.library.command.annotation.Aliases;
 import ru.dest.library.helpers.AnnotationValidator;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -18,6 +20,7 @@ public class InClassCommand<T extends JavaPlugin> implements SimpleCommand<T> {
 
     protected final T plugin;
     private final String name;
+    @Getter
     private final Method m;
     private final Object manager;
     private final List<String> aliases;

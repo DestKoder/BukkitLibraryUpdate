@@ -7,6 +7,9 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.jetbrains.annotations.NotNull;
 
+/**
+ * Called when entity was damaged by player
+ */
 public class EntityDamageByPlayerEvent extends EntityDamageByEntityEvent {
 
     private static final HandlerList handlers = new HandlerList();

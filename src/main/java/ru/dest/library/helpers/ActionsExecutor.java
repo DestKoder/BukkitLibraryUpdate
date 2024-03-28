@@ -16,7 +16,7 @@ public class ActionsExecutor {
     static{
         reg("player", Bukkit::dispatchCommand);
         reg("console", (p,s)-> Bukkit.dispatchCommand(Bukkit.getConsoleSender(), s));
-        reg("message", (p,s)-> ChatUtils.send(s, p));
+        reg("message", ChatUtils::send);
         reg("title", (p,s) -> {
             String[] data = s.split(";;");
             new TitleImpl(data[0], data[1]).send(p);

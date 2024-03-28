@@ -27,7 +27,7 @@ public final class ExecutionData {
 
     private final Map<String, String> flags;
 
-    public ExecutionData(CommandSender sender, BukkitCommand cmd, String alias, String @NotNull [] args){
+    public ExecutionData(CommandSender sender, Command cmd, String alias, String @NotNull [] args){
         this.executor = sender;
         this.command = cmd;
         this.alias = alias;

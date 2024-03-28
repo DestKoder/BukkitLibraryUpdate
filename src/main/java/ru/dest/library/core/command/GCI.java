@@ -7,6 +7,8 @@ import ru.dest.library.command.BukkitCommand;
 import ru.dest.library.command.ExecutionData;
 import ru.dest.library.command.annotation.Permission;
 import ru.dest.library.command.annotation.RequireArgs;
+import ru.dest.library.command.annotation.exp.Arguments;
+import ru.dest.library.command.annotation.exp.MultiPermission;
 import ru.dest.library.items.CustomItem;
 import ru.dest.library.items.ItemRegistry;
 import ru.dest.library.object.RegistryKey;
@@ -24,11 +26,6 @@ public class GCI extends BukkitCommand<Library> {
     @Override
     public void perform(@NotNull ExecutionData execution) throws Exception {
         Player actioned = execution.getPlayer(0);
-
-        if(actioned == null){
-            execution.executor().sendMessage("&cNot found???");
-            return;
-        }
 
         String itemId = execution.argument(1);
 

@@ -1,7 +1,7 @@
 name: BukkitLibrary
 version: '${project.version}'
 main: ru.dest.library.Library
-softdepend: [PlaceholderAPI, Vault, PlayerPoints]
+softdepend: [PlaceholderAPI, Vault, PlayerPoints, TAB]
 authors: [DestKoder]
 api-version: 1.16
 load: STARTUP

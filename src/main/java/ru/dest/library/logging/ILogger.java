@@ -40,5 +40,4 @@ public interface ILogger {
      * @param ex - exceptions
      */
    void error(Exception @NotNull ... ex);
-    void setPrintErrorStacktrace(boolean printErrorStacktrace);
 }

@@ -6,6 +6,7 @@ import ru.dest.library.logging.ILogger;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -21,9 +22,12 @@ public class GUIContainer {
 
         this.data = new HashMap<>();
 
+        System.out.println(folder);
+        System.out.println(Arrays.toString(folder.listFiles()));
+
         for(File f : folder.listFiles()){
             if(!f.isFile()) continue;
-            if(!f.getName().endsWith(".yaml") || !f.getName().endsWith(".yml")) continue;
+            if(!f.getName().endsWith(".yaml") && !f.getName().endsWith(".yml")) continue;
 
             try {
                 this.data.put(f.getName().split("\\.")[0], GUIConfig.load(f, logger));
@@ -31,6 +35,8 @@ public class GUIContainer {
                 logger.warning(ConsoleLogger.RED + "Error loading gui " + f.getName()+ ": " + e.getMessage());
             }
         }
+
+        System.out.println(data);
     }
 
     public GUIConfig get(String key){

@@ -18,7 +18,7 @@ public class EventListener extends BukkitListener<Library> {
         super(plugin);
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onEBPDamage(@NotNull EntityDamageByEntityEvent event){
         if(!(event.getDamager() instanceof Player)) return;
 
@@ -30,7 +30,7 @@ public class EventListener extends BukkitListener<Library> {
         event.setCancelled(e.isCancelled());
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onPBEDamage(@NotNull EntityDamageByEntityEvent event){
         if(!(event.getEntity() instanceof Player)) return;
         PlayerDamageByEntityEvent e = new PlayerDamageByEntityEvent(event.getDamager(), (Player) event.getEntity(), event.getCause(), event.getDamage());
@@ -41,7 +41,7 @@ public class EventListener extends BukkitListener<Library> {
         event.setCancelled(e.isCancelled());
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onPBPDamage(@NotNull EntityDamageByEntityEvent event){
         if(!(event.getEntity() instanceof Player)) return;
         if(!(event.getDamager() instanceof Player)) return;
@@ -54,7 +54,7 @@ public class EventListener extends BukkitListener<Library> {
         event.setCancelled(e.isCancelled());
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerItemInteract(@NotNull PlayerInteractEvent event){
         if(!event.hasItem()) return;
 
@@ -68,7 +68,7 @@ public class EventListener extends BukkitListener<Library> {
         event.setCancelled(e.isCancelled());
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerLocationChange(@NotNull PlayerMoveEvent event){
         if(event.getTo() == null) return;
         if(event.getFrom().getBlockX() == event.getTo().getBlockX() && event.getFrom().getBlockY() == event.getTo().getBlockY() && event.getFrom().getBlockZ() == event.getTo().getBlockZ()) return;

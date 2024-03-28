@@ -1,6 +1,8 @@
 package ru.dest.library.task;
 
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
@@ -22,6 +24,13 @@ public class TaskManager {
     private static TaskManager i;
 
     private final Map<String, BukkitTask> tasks;
+
+    private JavaPlugin plugin;
+
+    public TaskManager(JavaPlugin plugin){
+        this.plugin = plugin;
+        this.tasks = new HashMap<>();
+    }
 
     public TaskManager(){
         this.tasks = new HashMap<>();
@@ -140,6 +149,47 @@ public class TaskManager {
     public void callLater(String id, Plugin plugin, long delay, BukkitRunnable r) {
         callLater(id, plugin, delay, false, r);
     }
+
+    public void call(Runnable r){
+        if(plugin == null) throw new IllegalStateException("Plugin isn't initialzed. Use BukkitPlugin implementations for this method..");
+        Bukkit.getScheduler().runTask(plugin, r);
+    }
+
+    public void callLater(long delay, Runnable r){
+        if(plugin == null) throw new IllegalStateException("Plugin isn't initialzed. Use BukkitPlugin implementations for this method..");
+        Bukkit.getScheduler().runTaskLater(plugin, r, delay);
+    }
+
+    public void callRepeating(long delay, long time, Runnable r){
+        if(plugin == null) throw new IllegalStateException("Plugin isn't initialzed. Use BukkitPlugin implementations for this method..");
+        Bukkit.getScheduler().runTaskTimer(plugin, r, delay, time);
+    }
+
+    public void callRepeating(long time, Runnable r){
+        if(plugin == null) throw new IllegalStateException("Plugin isn't initialzed. Use BukkitPlugin implementations for this method..");
+        this.callRepeating(0L, time, r);
+    }
+
+    public void callAsync(Runnable r){
+        if(plugin == null) throw new IllegalStateException("Plugin isn't initialzed. Use BukkitPlugin implementations for this method..");
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, r);
+    }
+
+    public void callLaterAsync(long delay, Runnable r){
+        if(plugin == null) throw new IllegalStateException("Plugin isn't initialzed. Use BukkitPlugin implementations for this method..");
+        Bukkit.getScheduler().runTaskLaterAsynchronously(plugin, r, delay);
+    }
+
+    public void callRepeatingAsync(long delay, long time, Runnable r){
+        if(plugin == null) throw new IllegalStateException("Plugin isn't initialzed. Use BukkitPlugin implementations for this method..");
+        Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, r, delay, time);
+    }
+
+    public void callRepeatingAsync(long time, Runnable r){
+        if(plugin == null) throw new IllegalStateException("Plugin isn't initialzed. Use BukkitPlugin implementations for this method..");
+        this.callRepeatingAsync(0L, time, r);
+    }
+
 
     public void cancel(String id){
         if(!tasks.containsKey(id)) return;
